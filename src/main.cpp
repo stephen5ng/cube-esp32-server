@@ -90,7 +90,7 @@ void setup() {
   pinMode(LED, OUTPUT);
  
   WiFi.mode(WIFI_STA);
-  log(WiFi.macAddress());
+
   // sleep(2000);
   if (esp_now_init() != ESP_OK) {
     log("Error initializing ESP-NOW");
@@ -110,6 +110,7 @@ void setup() {
   }
   
   esp_now_register_recv_cb(on_data_recv);
+  log(WiFi.macAddress());
 }
 
 void loop() {
