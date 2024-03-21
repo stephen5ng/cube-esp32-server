@@ -7,8 +7,11 @@
 #include <Adafruit_SSD1306.h>
 
 const char* peers[] = {
+  "FCB4674F1CE0",
+  "E465B8770340",
   "D8BC38F93930",
-  "D8BC38FDD0BC"};
+  "C4DD578E46C8",
+  "D8BC38FDE098"};
 MessageLetter message_letter;
 esp_now_peer_info_t peer_info;
 
@@ -22,9 +25,11 @@ uint8_t last_led_state = LOW;
 #define SCREEN_HEIGHT 64
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
+#define LOG_LINES 4
+
 void log(const String& s) {
   static int i = 0;
-  if (i++ % 8 == 0) {
+  if (i++ % LOG_LINES == 0) {
     display.setCursor(0, 0);
     display.clearDisplay();
   }
@@ -70,21 +75,23 @@ void on_data_recv(const uint8_t *mac, const uint8_t *incomingData, int len) {
 
 void setup() {
   Serial.begin(115200);
-
+  Serial.println("setup...");
   if (!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
     Serial.println(F("SSD1306 allocation failed"));
     for(;;); // Don't proceed, loop forever
   }
+  Serial.println(F("SSD1306 allocation passed"));
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(WHITE);
   display.display();
+  Serial.println(F("display cleared"));
   
   pinMode(LED, OUTPUT);
  
   WiFi.mode(WIFI_STA);
   log(WiFi.macAddress());
-
+  // sleep(2000);
   if (esp_now_init() != ESP_OK) {
     log("Error initializing ESP-NOW");
     return;
@@ -106,6 +113,7 @@ void setup() {
 }
 
 void loop() {
+  // Wait for messages from game and relay them to the cubes.
   static String in_buffer = "";
   if (Serial.available() <= 0) {
     return;
