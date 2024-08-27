@@ -11,7 +11,8 @@ const char* peers[] = {
   "E465B8770340",
   "D8BC38F93930",
   "C4DD578E46C8",
-  "D8BC38FDE098"};
+  "D8BC38FDE098",
+  "E86BEADEB344"};
 MessageLetter message_letter;
 esp_now_peer_info_t peer_info;
 
@@ -35,6 +36,7 @@ void log(const String& s) {
   }
   display.println(String(i % 100) + ": " + s);
   display.display();
+  
 }
 
 String convert_to_hex_string(const uint8_t* data, int dataSize) {
@@ -75,7 +77,11 @@ void on_data_recv(const uint8_t *mac, const uint8_t *incomingData, int len) {
 
 void setup() {
   Serial.begin(115200);
-  Serial.println("setup...");
+  Serial.println("setup: macaddress");
+  Serial.println(WiFi.macAddress());
+  Serial.println("sleeping...");
+  // sleep(5000);
+  Serial.println("starting ssd1306");
   if (!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
     Serial.println(F("SSD1306 allocation failed"));
     for(;;); // Don't proceed, loop forever
@@ -140,6 +146,7 @@ void loop() {
   }
 
   String mac = in_buffer.substring(0, split_pos);
+  // message_letter.secret = '$';
   message_letter.letter = in_buffer.substring(split_pos + 1)[0];
   uint8_t send_address[ESP_NOW_ETH_ALEN];
   convert_to_hex_bytes(mac, send_address, ESP_NOW_ETH_ALEN);
