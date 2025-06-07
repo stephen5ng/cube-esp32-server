@@ -1,6 +1,6 @@
 typedef struct MessageLetter {
   char letter;
-  // char secret;
+  char secret;
 } MessageLetter;
 
 #define NFCID_LENGTH 8

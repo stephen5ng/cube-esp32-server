@@ -146,7 +146,7 @@ void loop() {
   }
 
   String mac = in_buffer.substring(0, split_pos);
-  // message_letter.secret = '$';
+  message_letter.secret = '$';
   message_letter.letter = in_buffer.substring(split_pos + 1)[0];
   uint8_t send_address[ESP_NOW_ETH_ALEN];
   convert_to_hex_bytes(mac, send_address, ESP_NOW_ETH_ALEN);
